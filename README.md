@@ -11,12 +11,15 @@ Este repositorio contiene el código fuente de un proyecto de hotel. A continuac
 
 Explica aquí brevemente la estructura del proyecto, las carpetas y archivos importantes.
 
-## Instalación
+## Uso
 
-Proporciona aquí instrucciones sobre cómo instalar y configurar el proyecto en un entorno local.
+Instrucciones de instalación y uso
 
 ```sh
 
 
 # Instalar dependencias
 npm install
+
+# correr servidor
+npm run dev
