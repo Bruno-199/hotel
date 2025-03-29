@@ -20,8 +20,8 @@ hotel/
 │   ├── config/            # Configuraciones
 │   │   └── db.js         # Configuración de la base de datos MySQL
 │   ├── controllers/       # Controladores
-│   │   ├── habitaciones.js    # Lógica de negocio para habitaciones
-│   │   └── imagenes.js        # Lógica de negocio para imágenes
+│   │   ├── habitaciones.js    # Consultas para habitaciones
+│   │   └── imagenes.js        # Consultas para imágenes
 │   ├── routes/           # Rutas de la API
 │   │   ├── habitaciones.js    # Endpoints de habitaciones
 │   │   └── imagenes.js        # Endpoints de imágenes
@@ -33,22 +33,6 @@ hotel/
     └── index.html       # Página principal
 ```
 
-### Descripción de la estructura
-
-- **back/**: Contiene todo el código del servidor
-  - **config/**: Archivos de configuración
-    - `db.js`: Configuración de la conexión a MySQL
-  - **controllers/**: Lógica de negocio
-    - `habitaciones.js`: Gestión de habitaciones (CRUD)
-    - `imagenes.js`: Gestión de imágenes de habitaciones
-  - **routes/**: Definición de rutas API
-    - `habitaciones.js`: Rutas para gestión de habitaciones
-    - `imagenes.js`: Rutas para gestión de imágenes
-  - `index.js`: Archivo principal que inicia el servidor
-  - `package.json`: Gestión de dependencias y scripts
-
-- **front/**: Contiene el código del cliente
-  - `index.html`: Página principal de la aplicación
 
 ## Uso
 
