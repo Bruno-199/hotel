@@ -1,7 +1,7 @@
 const { conection } = require("../config/db");
 
 const todo_habitaciones = (req, res) => {
-  const query = `SELECT * FROM habitaciones WHERE estado != 'mantenimiento'`;
+  const query = `SELECT * FROM habitaciones`;
   
   conection.query(query, (err, results) => {
     if (err) throw err;

@@ -5,6 +5,7 @@ const { conection } = require("./config/db");
 // Importación de rutas
 const habitacionesRoutes = require("./routes/habitaciones");
 const imagenesRoutes = require("./routes/imagenes");
+const reservasRoutes = require("./routes/reservas");
 
 // Inicialización de la app
 const app = express();
@@ -22,6 +23,7 @@ app.get("/", (req, res) => {
 // Rutas modulares
 app.use("/", habitacionesRoutes);
 app.use("/", imagenesRoutes);
+app.use("/", reservasRoutes);
 
 // Conexión a la base de datos
 conection.connect((err) => {
