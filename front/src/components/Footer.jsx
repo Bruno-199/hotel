@@ -20,8 +20,6 @@ const Footer = () => {
           <ul>
             <li><Link to="/">Inicio</Link></li>
             <li><Link to="/habitaciones">Habitaciones</Link></li>
-            <li><Link to="/#servicios">Servicios</Link></li>
-            <li><Link to="/#contacto">Contacto</Link></li>
             <li><Link to="/login">Login</Link></li>
           </ul>
         </div>
@@ -46,10 +44,8 @@ const Footer = () => {
       <div className="footer-bottom">
         <p>&copy; {new Date().getFullYear()} Hotel Le Park. Todos los derechos reservados.</p>
         <div className="footer-social">
-          <a href="#"><i className="fab fa-facebook-f"></i></a>
-          <a href="#"><i className="fab fa-instagram"></i></a>
-          <a href="#"><i className="fab fa-twitter"></i></a>
-          <a href="#"><i className="fab fa-tripadvisor"></i></a>
+          <a href="https://www.facebook.com/hotellepark?locale=es_LA"><i className="fab fa-facebook-f"></i></a>
+          <a href="https://www.instagram.com/hotel.lepark/"><i className="fab fa-instagram"></i></a>
         </div>
       </div>
     </footer>

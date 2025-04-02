@@ -55,10 +55,8 @@ const Contact = () => {
           </div>
           
           <div className="social-media">
-            <a href="#" className="social-icon"><i className="fab fa-facebook-f"></i></a>
-            <a href="#" className="social-icon"><i className="fab fa-instagram"></i></a>
-            <a href="#" className="social-icon"><i className="fab fa-twitter"></i></a>
-            <a href="#" className="social-icon"><i className="fab fa-tripadvisor"></i></a>
+            <a href="https://www.facebook.com/hotellepark?locale=es_LA" className="social-icon"><i className="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/hotel.lepark/" className="social-icon"><i className="fab fa-instagram"></i></a>
           </div>
         </div>
         
