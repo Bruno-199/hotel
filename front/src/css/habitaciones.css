@@ -10,7 +10,6 @@
   .habitaciones-page {
     min-height: 100vh;
     background-color: var(--gray-light);
-    padding-bottom: 4rem;
   }
   
   .habitaciones-header {

@@ -18,26 +18,30 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     
-    // Simple validation
-    if (!credentials.username || !credentials.password) {
-      setError('Por favor complete todos los campos');
-      return;
-    }
-    
-    // Mock authentication - in a real app, this would be an API call
-    if (credentials.username === 'admin' && credentials.password === 'admin123') {
-      // Store authentication state (in a real app, you'd use JWT or similar)
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('user', JSON.stringify({ username: credentials.username, role: 'admin' }));
-      
-      // Redirect to admin dashboard
-      navigate('/admin');
-    } else {
-      setError('Usuario o contraseña incorrectos');
+    try {
+        const response = await fetch('http://localhost:8000/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(credentials)
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            localStorage.setItem('isAuthenticated', 'true');
+            localStorage.setItem('user', JSON.stringify(data.user));
+            navigate('/admin');
+        } else {
+            setError('Usuario o contraseña incorrectos');
+        }
+    } catch (err) { // Cambiamos 'error' por 'err' para evitar confusión
+        console.error('Error de conexión:', err); // Agregamos log del error
+        setError('Error de conexión al servidor');
     }
   };
 
