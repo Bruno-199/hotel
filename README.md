@@ -42,7 +42,16 @@ Instrucciones de instalación y uso
 
 
 # Instalar dependencias
+cd front
+npm install
+---------
+cd back
 npm install
 
-# correr servidor
+# Correr front
+cd front
+npm run dev
+
+# Correr servidor
+cd back
 npm run dev
