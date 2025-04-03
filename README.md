@@ -41,7 +41,8 @@ Instrucciones de instalación y uso
 ```sh
 
 
-# Instalar dependencias
+# Instalar dependencias (front y back por separado)
+
 cd front
 npm install
 ---------
