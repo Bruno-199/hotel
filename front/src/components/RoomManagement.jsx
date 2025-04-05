@@ -6,131 +6,108 @@ const RoomManagement = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    id: null,
-    name: '',
-    description: '',
-    price: '',
-    capacity: 1,
-    beds: '',
-    type: 'standard',
-    available: true,
-    image: ''
+    numero: '',
+    piso: '',
+    tipo: 'individual',
+    precio: '',
+    capacidad: 1,
+    estado: 'disponible'  // Cambiado de booleano a string
   });
   const [isEditing, setIsEditing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
 
   // Fetch rooms data
   useEffect(() => {
-    // In a real app, this would be an API call
-    setTimeout(() => {
-      const mockRooms = [
-        {
-          id: 1,
-          name: 'Habitación Standard',
-          description: 'Habitación confortable con todas las comodidades básicas para una estadía placentera.',
-          price: 100,
-          capacity: 2,
-          beds: '1 Cama Queen',
-          type: 'standard',
-          available: true,
-          image: '/assets/room1.jpg'
-        },
-        {
-          id: 2,
-          name: 'Habitación Deluxe',
-          description: 'Espaciosa habitación con vistas a la ciudad y amenities premium.',
-          price: 150,
-          capacity: 2,
-          beds: '1 Cama King',
-          type: 'deluxe',
-          available: true,
-          image: '/assets/room2.jpg'
-        },
-        {
-          id: 3,
-          name: 'Suite Junior',
-          description: 'Suite elegante con sala de estar separada y baño de lujo.',
-          price: 200,
-          capacity: 3,
-          beds: '1 Cama King + 1 Sofá cama',
-          type: 'suite',
-          available: true,
-          image: '/assets/room3.jpg'
-        },
-        {
-          id: 4,
-          name: 'Suite Familiar',
-          description: 'Amplia suite ideal para familias con dos habitaciones conectadas.',
-          price: 250,
-          capacity: 4,
-          beds: '1 Cama King + 2 Camas Twin',
-          type: 'suite',
-          available: false,
-          image: '/assets/room4.jpg'
-        }
-      ];
-      
-      setRooms(mockRooms);
-      setLoading(false);
-    }, 1000);
+    fetchRooms();
   }, []);
 
+  const fetchRooms = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/habitaciones');
+      const data = await response.json();
+      setRooms(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error al cargar habitaciones:', error);
+      setLoading(false);
+    }
+  };
+
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: value
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (isEditing) {
-      // Update existing room
-      const updatedRooms = rooms.map(room => 
-        room.id === formData.id ? { ...formData, price: Number(formData.price) } : room
-      );
-      setRooms(updatedRooms);
-    } else {
-      // Add new room
-      const newRoom = {
-        ...formData,
-        id: Date.now(), // Simple ID generation
-        price: Number(formData.price)
-      };
-      setRooms([...rooms, newRoom]);
+    try {
+      const url = isEditing 
+        ? `http://localhost:8000/habitaciones/editar/${formData.id_habitacion}`
+        : 'http://localhost:8000/habitaciones/agregar';
+      
+      const response = await fetch(url, {
+        method: isEditing ? 'PUT' : 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          numero: parseInt(formData.numero),
+          piso: parseInt(formData.piso),
+          tipo: formData.tipo,
+          precio: parseFloat(formData.precio),
+          capacidad: parseInt(formData.capacidad),
+          estado: formData.estado
+        })
+      });
+
+      if (!response.ok) throw new Error('Error en la petición');
+
+      await fetchRooms();
+      resetForm();
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al guardar la habitación');
     }
-    
-    // Reset form
-    resetForm();
   };
 
   const handleEdit = (room) => {
     setFormData({
       ...room,
-      price: room.price.toString()
+      precio: room.precio.toString()
     });
     setIsEditing(true);
     setShowForm(true);
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm('¿Está seguro de que desea eliminar esta habitación?')) {
-      setRooms(rooms.filter(room => room.id !== id));
+      try {
+        const response = await fetch(`http://localhost:8000/habitaciones/eliminar/${id}`, {
+          method: 'DELETE'
+        });
+
+        if (!response.ok) throw new Error('Error al eliminar');
+
+        await fetchRooms();
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al eliminar la habitación');
+      }
     }
   };
 
   const resetForm = () => {
     setFormData({
-      id: null,
-      name: '',
-      description: '',
-      price: '',
-      capacity: 1,
-      beds: '',
-      type: 'standard',
-      available: true,
-      image: ''
+      numero: '',
+      piso: '',
+      tipo: 'individual',
+      precio: '',
+      capacidad: 1,
+      estado: 'disponible'  // Cambiado de booleano a string
     });
     setIsEditing(false);
     setShowForm(false);
@@ -138,10 +115,14 @@ const RoomManagement = () => {
 
   const toggleAvailability = (id) => {
     const updatedRooms = rooms.map(room => 
-      room.id === id ? { ...room, available: !room.available } : room
+      room.id === id ? { ...room, estado: room.estado === 'disponible' ? 'no disponible' : 'disponible' } : room
     );
     setRooms(updatedRooms);
   };
+
+  const filteredRooms = rooms.filter(room => 
+    room.numero.toString().includes(searchTerm.trim())
+  );
 
   if (loading) {
     return <div className="loading">Cargando habitaciones...</div>;
@@ -158,7 +139,13 @@ const RoomManagement = () => {
         </button>
         
         <div className="room-search">
-          <input type="text" placeholder="Buscar habitaciones..." />
+          <input 
+            type="text" 
+            placeholder="Buscar por número..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
           <button><i className="fas fa-search"></i></button>
         </div>
       </div>
@@ -169,110 +156,99 @@ const RoomManagement = () => {
           <form onSubmit={handleSubmit} className="room-form">
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="name">Nombre de la Habitación</label>
+                <label htmlFor="numero">Número</label>
                 <input
                   type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
+                  id="numero"
+                  name="numero"
+                  value={formData.numero}
                   onChange={handleChange}
                   required
                 />
               </div>
               
               <div className="form-group">
-                <label htmlFor="type">Tipo</label>
+                <label htmlFor="piso">Piso</label>
+                <input
+                  type="number"
+                  id="piso"
+                  name="piso"
+                  value={formData.piso}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="form-row">
+              <div className="form-group">
+                <label htmlFor="tipo">Tipo</label>
                 <select
-                  id="type"
-                  name="type"
-                  value={formData.type}
+                  id="tipo"
+                  name="tipo"
+                  value={formData.tipo}
                   onChange={handleChange}
                   required
                 >
-                  <option value="standard">Standard</option>
-                  <option value="deluxe">Deluxe</option>
+                  <option value="individual">Individual</option>
+                  <option value="doble">Doble</option>
                   <option value="suite">Suite</option>
                 </select>
               </div>
+              
+              <div className="form-group">
+                <label htmlFor="capacidad">Capacidad</label>
+                <input
+                  type="number"
+                  id="capacidad"
+                  name="capacidad"
+                  min="1"
+                  value={formData.capacidad}
+                  onChange={handleChange}
+                  required
+                />
+              </div>
             </div>
             
-            <div className="form-group">
-              <label htmlFor="description">Descripción</label>
+            {/* <div className="form-group">
+              <label htmlFor="descripcion">Descripción</label>
               <textarea
-                id="description"
-                name="description"
-                value={formData.description}
+                id="descripcion"
+                name="descripcion"
+                value={formData.descripcion}
                 onChange={handleChange}
                 required
               ></textarea>
-            </div>
+            </div> */}
             
             <div className="form-row">
               <div className="form-group">
-                <label htmlFor="price">Precio por Noche ($)</label>
+                <label htmlFor="precio">Precio por Noche ($)</label>
                 <input
                   type="number"
-                  id="price"
-                  name="price"
+                  id="precio"
+                  name="precio"
                   min="0"
-                  value={formData.price}
+                  value={formData.precio}
                   onChange={handleChange}
                   required
                 />
               </div>
               
               <div className="form-group">
-                <label htmlFor="capacity">Capacidad</label>
-                <input
-                  type="number"
-                  id="capacity"
-                  name="capacity"
-                  min="1"
-                  value={formData.capacity}
+                <label htmlFor="estado">Estado</label>
+                <select
+                  id="estado"
+                  name="estado"
+                  value={formData.estado}
                   onChange={handleChange}
                   required
-                />
+                >
+                  <option value="disponible">Disponible</option>
+                  <option value="ocupada">Ocupada</option>
+                  <option value="mantenimiento">Mantenimiento</option>
+                </select>
               </div>
-            </div>
-            
-            <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="beds">Camas</label>
-                <input
-                  type="text"
-                  id="beds"
-                  name="beds"
-                  value={formData.beds}
-                  onChange={handleChange}
-                  required
-                  placeholder="Ej: 1 Cama King"
-                />
-              </div>
-              
-              <div className="form-group">
-                <label htmlFor="image">URL de la Imagen</label>
-                <input
-                  type="text"
-                  id="image"
-                  name="image"
-                  value={formData.image}
-                  onChange={handleChange}
-                  required
-                  placeholder="Ej: /assets/room1.jpg"
-                />
-              </div>
-            </div>
-            
-            <div className="form-group checkbox-group">
-              <label>
-                <input
-                  type="checkbox"
-                  name="available"
-                  checked={formData.available}
-                  onChange={handleChange}
-                />
-                Disponible para reservas
-              </label>
             </div>
             
             <div className="form-actions">
@@ -289,9 +265,8 @@ const RoomManagement = () => {
         <table className="room-table">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Imagen</th>
-              <th>Nombre</th>
+              <th>Número</th>
+              <th>Piso</th>
               <th>Tipo</th>
               <th>Capacidad</th>
               <th>Precio</th>
@@ -300,35 +275,32 @@ const RoomManagement = () => {
             </tr>
           </thead>
           <tbody>
-            {rooms.length === 0 ? (
+            {filteredRooms.length === 0 ? (
               <tr>
-                <td colSpan="8" className="no-data">No hay habitaciones disponibles</td>
+                <td colSpan="7" className="no-data">
+                  {searchTerm ? 'No se encontraron habitaciones' : 'No hay habitaciones disponibles'}
+                </td>
               </tr>
             ) : (
-              rooms.map(room => (
-                <tr key={room.id}>
-                  <td>{room.id}</td>
+              filteredRooms.map(room => (
+                <tr key={room.id_habitacion}>
+                  <td>{room.numero}</td>
+                  <td>{room.piso}</td>
                   <td>
-                    <div className="room-image-small">
-                      <img src={room.image} alt={room.name} />
-                    </div>
+                    {room.tipo 
+                      ? room.tipo.charAt(0).toUpperCase() + room.tipo.slice(1)
+                      : 'No especificado'
+                    }
                   </td>
+                  <td>{room.capacidad} personas</td>
+                  <td>${room.precio}</td>
                   <td>
-                    <div className="room-info">
-                      <span className="room-name">{room.name}</span>
-                      <span className="room-beds">{room.beds}</span>
-                    </div>
-                  </td>
-                  <td>{room.type.charAt(0).toUpperCase() + room.type.slice(1)}</td>
-                  <td>{room.capacity} personas</td>
-                  <td>${room.price}</td>
-                  <td>
-                    <button 
-                      className={`availability-toggle ${room.available ? 'available' : 'unavailable'}`}
-                      onClick={() => toggleAvailability(room.id)}
-                    >
-                      {room.available ? 'Disponible' : 'No Disponible'}
-                    </button>
+                    <span className={`status-badge ${room.estado || 'disponible'}`}>
+                      {room.estado 
+                        ? room.estado.charAt(0).toUpperCase() + room.estado.slice(1)
+                        : 'Disponible'
+                      }
+                    </span>
                   </td>
                   <td>
                     <div className="action-buttons">
@@ -340,7 +312,7 @@ const RoomManagement = () => {
                       </button>
                       <button 
                         className="delete-btn"
-                        onClick={() => handleDelete(room.id)}
+                        onClick={() => handleDelete(room.id_habitacion)}
                       >
                         <i className="fas fa-trash-alt"></i>
                       </button>

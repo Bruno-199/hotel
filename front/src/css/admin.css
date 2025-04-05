@@ -15,12 +15,18 @@
   }
   
   .admin-sidebar {
+    position: fixed;
+    top: 80px; /* Altura del navbar desde navbar.css */
+    left: 0;
     width: 250px;
+    height: calc(100vh - 80px); /* Restar altura del navbar */
     background-color: var(--secondary-color);
     color: var(--light-color);
     padding: 1.5rem 0;
     display: flex;
     flex-direction: column;
+    overflow-y: auto;
+    z-index: 100; /* Menor que el navbar */
   }
   
   .admin-profile {
@@ -76,8 +82,11 @@
   
   .admin-content {
     flex: 1;
+    margin-left: 250px;
     padding: 1.5rem;
-    overflow-y: auto;
+    padding-top: 30px; /* Reducido de 95px a 60px */
+    min-height: 100vh;
+    background-color: var(--gray-light);
   }
   
   .admin-header {
@@ -127,8 +136,10 @@
     }
     
     .admin-sidebar {
-      width: 100%;
-      padding: 1rem 0;
+      position: fixed;
+      top: 80px; /* Mantener consistencia con el navbar responsive */
+      width: 200px;
+      height: calc(100vh - 80px);
     }
     
     .admin-profile {
@@ -141,6 +152,8 @@
     }
     
     .admin-content {
+      margin-left: 200px;
       padding: 1rem;
+      padding-top: 60px; /* Ajustado también en responsive */
     }
   }

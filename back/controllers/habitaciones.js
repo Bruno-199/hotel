@@ -10,13 +10,13 @@ const todo_habitaciones = (req, res) => {
 };
 
 const agregar_habitacion = (req, res) => {
-  const { numero, tipo, precio, descripcion, capacidad, estado } = req.body;
+  const { numero, piso, tipo, precio, descripcion, capacidad, estado } = req.body;
   
   const query = `INSERT INTO habitaciones 
-                 (numero, tipo, precio, descripcion, capacidad, estado) 
-                 VALUES (?, ?, ?, ?, ?, ?)`;
+                 (numero,piso, tipo, precio, descripcion, capacidad, estado) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?)`;
   
-  conection.query(query, [numero, tipo, precio, descripcion, capacidad, estado], (err, results) => {
+  conection.query(query, [numero, piso, tipo, precio, descripcion, capacidad, estado], (err, results) => {
     if (err) throw err;
     res.send(results);
   });
@@ -49,10 +49,11 @@ const borrar_habitacion = (req, res) => {
 
 const editar_habitacion = (req, res) => {
   const id = req.params.id;
-  const { numero, tipo, precio, descripcion, capacidad, estado } = req.body;
+  const { numero, piso, tipo, precio, descripcion, capacidad, estado } = req.body;
   
   const query = `UPDATE habitaciones 
                  SET numero = ?, 
+                     piso = ?,
                      tipo = ?, 
                      precio = ?, 
                      descripcion = ?, 
@@ -60,7 +61,7 @@ const editar_habitacion = (req, res) => {
                      estado = ? 
                  WHERE id_habitacion = ?`;
   
-  conection.query(query, [numero, tipo, precio, descripcion, capacidad, estado, id], (err, results) => {
+  conection.query(query, [numero, piso, tipo, precio, descripcion, capacidad, estado, id], (err, results) => {
     if (err) throw err;
     res.send(results);
   });
