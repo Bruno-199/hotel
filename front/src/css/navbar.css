@@ -38,6 +38,8 @@
   .logo-img {
     height: 50px;
     margin-right: 10px;
+    width: 190px;
+    height: auto; 
   }
   
   .nav-menu {

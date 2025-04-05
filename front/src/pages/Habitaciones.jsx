@@ -14,48 +14,73 @@ const Habitaciones = () => {
       const roomsData = [
         {
           id: 1,
-          name: 'Habitación Standard',
+          name: 'Habitación Single',
           description: 'Habitación confortable con todas las comodidades básicas para una estadía placentera.',
-          price: 100,
-          capacity: 2,
-          beds: '1 Cama Queen',
+          price: 36000,
+          price1: 30000,
+          capacity: 1,
+          beds: '1 Cama simple',
           image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
           available: true,
-          type: 'standard'
+          type: 'single'
         },
         {
           id: 2,
-          name: 'Habitación Deluxe',
+          name: 'Habitación Doble',
           description: 'Espaciosa habitación con vistas a la ciudad y amenities premium.',
-          price: 150,
+          price: 54000,
+          price1: 42000,
           capacity: 2,
           beds: '1 Cama King',
           image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80",
           available: true,
-          type: 'deluxe'
+          type: 'doble'
         },
         {
           id: 3,
-          name: 'Suite Junior',
+          name: 'Habitación Triple',
           description: 'Suite elegante con sala de estar separada y baño de lujo.',
-          price: 200,
+          price: 68000,
+          price1: 50000,
           capacity: 3,
           beds: '1 Cama King + 1 Sofá cama',
           image: "https://images.unsplash.com/photo-1578683010236-d716f9a3f461?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
           available: true,
-          type: 'suite'
+          type: 'triple'
         },
         {
           id: 4,
-          name: 'Suite Familiar',
+          name: 'Habitación Cuadruple',
           description: 'Amplia suite ideal para familias con dos habitaciones conectadas.',
-          price: 250,
+          price: 84000,
           capacity: 4,
           beds: '1 Cama King + 2 Camas Twin',
           image: "https://images.unsplash.com/photo-1566665797739-1674de7a421a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80",
-          available: false,
+          available: true,
+          type: 'cuadruple'
+        },
+        {
+          id: 5,
+          name: 'Habitación Quintuple',
+          description: 'Espaciosa habitación con vistas a la ciudad y amenities premium.',
+          price: 89000,
+          capacity: 2,
+          beds: '1 Cama King',
+          image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80",
+          available: true,
+          type: 'quintuple'
+        },
+        {
+          id: 6,
+          name: 'Habitación Suite',
+          description: 'Espaciosa habitación con vistas a la ciudad y amenities premium.',
+          price: 100000,
+          capacity: 2,
+          beds: '1 Cama King',
+          image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80",
+          available: true,
           type: 'suite'
-        }
+        },
       ];
       
       setRooms(roomsData);
@@ -67,9 +92,21 @@ const Habitaciones = () => {
     ? rooms 
     : rooms.filter(room => room.type === filter);
 
-  const handleReservation = (roomId) => {
-    // This would typically redirect to a reservation form or modal
-    alert(`Iniciando reserva para la habitación ID: ${roomId}`);
+  const handleReservation = (room) => {
+    // Número de teléfono al que se enviará el mensaje (reemplaza con el número real)
+    const phoneNumber = "543816396545"; 
+  
+    // Crear el mensaje predeterminado
+    const message = `Hola, me interesa reservar la ${room.name}`;
+  
+    // Codificar el mensaje para la URL
+    const encodedMessage = encodeURIComponent(message);
+  
+    // Crear el enlace de WhatsApp
+    const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+  
+    // Abrir WhatsApp en una nueva pestaña
+    window.open(whatsappURL, '_blank');
   };
 
   return (
@@ -87,23 +124,42 @@ const Habitaciones = () => {
           Todas
         </button>
         <button 
-          className={`filter-btn ${filter === 'standard' ? 'active' : ''}`}
-          onClick={() => setFilter('standard')}
+          className={`filter-btn ${filter === 'single' ? 'active' : ''}`}
+          onClick={() => setFilter('single')}
         >
-          Standard
+          Single
         </button>
         <button 
-          className={`filter-btn ${filter === 'deluxe' ? 'active' : ''}`}
-          onClick={() => setFilter('deluxe')}
+          className={`filter-btn ${filter === 'doble' ? 'active' : ''}`}
+          onClick={() => setFilter('doble')}
         >
-          Deluxe
+         Doble
+        </button>
+        <button 
+          className={`filter-btn ${filter === 'triple' ? 'active' : ''}`}
+          onClick={() => setFilter('triple')}
+        >
+           Triple
+        </button>
+        <button 
+          className={`filter-btn ${filter === 'cuadruple' ? 'active' : ''}`}
+          onClick={() => setFilter('cuadruple')}
+        >
+          Cuadruple
+        </button>
+        <button 
+          className={`filter-btn ${filter === 'quintuple' ? 'active' : ''}`}
+          onClick={() => setFilter('quintuple')}
+        >
+          Quintuple
         </button>
         <button 
           className={`filter-btn ${filter === 'suite' ? 'active' : ''}`}
           onClick={() => setFilter('suite')}
         >
-          Suites
+          Suite
         </button>
+        
       </div>
       
       {loading ? (
@@ -122,11 +178,12 @@ const Habitaciones = () => {
                 <div className="room-info">
                   <p><i className="fas fa-user-friends"></i> Capacidad: {room.capacity} personas</p>
                   <p><i className="fas fa-bed"></i> {room.beds}</p>
-                  <p className="room-price">${room.price} <span>/ noche</span></p>
+                  <p className="room-price">${room.price} <span>/ con desayuno</span></p>
+                  <p className="room-price">${room.price1} <span>/ sin desayuno</span></p>
                 </div>
                 <button 
                   className="reserve-btn"
-                  onClick={() => handleReservation(room.id)}
+                  onClick={() => handleReservation(room)}
                   disabled={!room.available}
                 >
                   {room.available ? 'Reservar Ahora' : 'No Disponible'}

@@ -4,14 +4,13 @@ import '../css/footer.css';
 
 const Footer = () => {
   // Using an online logo URL instead of local import
-  const logoUrl = "https://img.freepik.com/free-vector/gradient-hotel-logo-template_23-2149928443.jpg";
+  const logoUrl = "https://lh3.googleusercontent.com/proxy/xqttsQDGnGeNZhbwkodBvbXcwKuHxdecxTsa8AyUG3pFSH-Th-hemilbqqcc3Hrqm-xc5vO9K9n9xevRwXuFOBp2NQ";
 
   return (
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-logo">
           <img src={logoUrl} alt="Hotel Le Park Logo" />
-          <h3>Hotel Le Park</h3>
           <p>Elegancia y confort en cada detalle</p>
         </div>
         

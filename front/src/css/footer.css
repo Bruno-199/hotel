@@ -28,8 +28,9 @@
   }
   
   .footer-logo img {
-    height: 60px;
-    margin-bottom: 1rem;
+    width: 250px; 
+    height: auto; 
+    margin-bottom: 10px; 
   }
   
   .footer-logo h3 {
