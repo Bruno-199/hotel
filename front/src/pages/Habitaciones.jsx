@@ -32,7 +32,7 @@ const Habitaciones = () => {
           price1: 42000,
           capacity: 2,
           beds: '1 Cama King',
-          image: "https://images.unsplash.com/photo-1590490360182-c33d57733427?ixlib=rb-4.0.3&auto=format&fit=crop&w=1074&q=80",
+          image: "https://drive.google.com/thumbnail?id=1UxDMa66cj3VLWdt5BkfirdZRuQgFrWyo",
           available: true,
           type: 'doble'
         },

@@ -115,13 +115,14 @@ const Contact = () => {
       
       <div className="map-container">
         <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3284.0168878895476!2d-58.38375908417444!3d-34.60373446500075!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzTCsDM2JzEzLjQiUyA1OMKwMjInNTguMiJX!5e0!3m2!1ses-419!2sar!4v1623252354862!5m2!1ses-419!2sar" 
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3560.6838177698355!2d-65.20825424999999!3d-26.814725499999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94225c3b753552ff%3A0x15799e98661a9b90!2sHotel%20Le%20Park!5e0!3m2!1ses!2sar!4v1680901234567!5m2!1ses!2sar"
           width="100%" 
           height="450" 
           style={{ border: 0 }} 
           allowFullScreen="" 
           loading="lazy"
-          title="Hotel Location"
+          referrerPolicy="no-referrer-when-downgrade"
+          title="Hotel Le Park Location"
         ></iframe>
       </div>
     </section>
