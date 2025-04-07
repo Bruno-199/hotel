@@ -20,7 +20,8 @@ const Habitaciones = () => {
           price1: 30000,
           capacity: 1,
           beds: '1 Cama simple',
-          image: "https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+          // Agregar parámetros de transformación a la URL de Cloudinary
+          image: "https://res.cloudinary.com/dhpcc3pqo/image/upload/w_800,h_600,c_fill,q_auto/v1743886787/IMG_4123_yjld69.jpg",
           available: true,
           type: 'single'
         },
