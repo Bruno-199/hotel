@@ -6,7 +6,7 @@ const ReservationTable = () => {
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    id_habitacion: '',
+    numero_habitacion: '', // Cambiar id_habitacion por numero_habitacion
     nombre: '',
     telefono: '',
     dni: '',
@@ -16,6 +16,7 @@ const ReservationTable = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [rooms, setRooms] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     fetchReservations();
@@ -58,6 +59,17 @@ const ReservationTable = () => {
     e.preventDefault();
     
     try {
+      // Verificar si la habitación existe y está disponible
+      const habitacion = rooms.find(room => room.numero.toString() === formData.numero_habitacion);
+      
+      if (!habitacion) {
+        throw new Error('La habitación no existe');
+      }
+
+      if (habitacion.estado === 'mantenimiento' || habitacion.estado === 'ocupada') {
+        throw new Error('La habitación no está disponible');
+      }
+
       const url = isEditing 
         ? `http://localhost:8000/reservas/editar/${formData.id_reserva}`
         : 'http://localhost:8000/reservas/agregar';
@@ -69,6 +81,7 @@ const ReservationTable = () => {
         },
         body: JSON.stringify({
           ...formData,
+          id_habitacion: habitacion.id_habitacion, // Usar el ID de la habitación encontrada
           estado: formData.estado || 'pendiente'
         })
       });
@@ -76,7 +89,6 @@ const ReservationTable = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // Mostrar el mensaje de error del trigger
         throw new Error(data.error || 'Error al procesar la reserva');
       }
 
@@ -84,12 +96,11 @@ const ReservationTable = () => {
       resetForm();
     } catch (error) {
       console.error('Error:', error);
-      alert(error.message); // Mostrar el mensaje de error al usuario
+      alert(error.message);
     }
   };
 
   const handleEdit = (reservation) => {
-    // Formatear las fechas al formato YYYY-MM-DD que acepta el input date
     const formatDateForInput = (dateString) => {
       const date = new Date(dateString);
       return date.toISOString().split('T')[0];
@@ -97,7 +108,7 @@ const ReservationTable = () => {
 
     setFormData({
       ...reservation,
-      id_habitacion: reservation.id_habitacion.toString(),
+      numero_habitacion: reservation.numero_habitacion.toString(), // Usar numero_habitacion en lugar de id_habitacion
       fecha_entrada: formatDateForInput(reservation.fecha_entrada),
       fecha_salida: formatDateForInput(reservation.fecha_salida)
     });
@@ -124,7 +135,7 @@ const ReservationTable = () => {
 
   const resetForm = () => {
     setFormData({
-      id_habitacion: '',
+      numero_habitacion: '', // Actualizar este campo
       nombre: '',
       telefono: '',
       dni: '',
@@ -147,6 +158,10 @@ const ReservationTable = () => {
   };
   // Resultado: "01-04-2025"
 
+  const filteredReservations = reservations.filter(reservation =>
+    reservation.nombre.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   if (loading) {
     return <div className="loading">Cargando reservaciones...</div>;
   }
@@ -162,7 +177,13 @@ const ReservationTable = () => {
         </button>
         
         <div className="reservation-search">
-          <input type="text" placeholder="Buscar reservaciones..." />
+          <input 
+            type="text" 
+            placeholder="Buscar por nombre de huésped..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
           <button><i className="fas fa-search"></i></button>
         </div>
       </div>
@@ -210,21 +231,17 @@ const ReservationTable = () => {
               </div>
               
               <div className="form-group">
-                <label htmlFor="id_habitacion">Habitación</label>
-                <select
-                  id="id_habitacion"
-                  name="id_habitacion"
-                  value={formData.id_habitacion}
+                <label htmlFor="numero_habitacion">Número de Habitación</label>
+                <input
+                  type="number"
+                  id="numero_habitacion"
+                  name="numero_habitacion"
+                  value={formData.numero_habitacion}
                   onChange={handleChange}
                   required
-                >
-                  <option value="">Seleccione una habitación</option>
-                  {rooms.map(room => (
-                    <option key={room.id_habitacion} value={room.id_habitacion}>
-                      Habitación {room.numero}
-                    </option>
-                  ))}
-                </select>
+                  min="1"
+                  placeholder="Ingrese el número de habitación"
+                />
               </div>
             </div>
             
@@ -284,8 +301,8 @@ const ReservationTable = () => {
         <table className="reservation-table">
           <thead>
             <tr>
-              <th>ID</th>
               <th>Huésped</th>
+              <th>DNI</th>
               <th>Habitación</th>
               <th>Check-in</th>
               <th>Check-out</th>
@@ -294,20 +311,22 @@ const ReservationTable = () => {
             </tr>
           </thead>
           <tbody>
-            {reservations.length === 0 ? (
+            {filteredReservations.length === 0 ? (
               <tr>
-                <td colSpan="7" className="no-data">No hay reservaciones disponibles</td>
+                <td colSpan="7" className="no-data">
+                  {searchTerm ? 'No se encontraron reservaciones' : 'No hay reservaciones disponibles'}
+                </td>
               </tr>
             ) : (
-              reservations.map(reservation => (
+              filteredReservations.map(reservation => (
                 <tr key={reservation.id_reserva} className={`status-${reservation.estado}`}>
-                  <td>{reservation.id_reserva}</td>
                   <td>
                     <div className="guest-info">
                       <span className="guest-name">{reservation.nombre}</span>
                       <span className="guest-phone">{reservation.telefono}</span>
                     </div>
                   </td>
+                  <td>{reservation.dni}</td>
                   <td>Habitación {reservation.numero_habitacion}</td>
                   <td>{formatDate(reservation.fecha_entrada)}</td>
                   <td>{formatDate(reservation.fecha_salida)}</td>

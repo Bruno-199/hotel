@@ -8,13 +8,14 @@ const RoomManagement = () => {
   const [formData, setFormData] = useState({
     numero: '',
     piso: '',
-    tipo: 'individual',
-    precio: '',
+    tipo: 'single',
     capacidad: 1,
     estado: 'disponible'  // Cambiado de booleano a string
   });
   const [isEditing, setIsEditing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [pisoFilter, setPisoFilter] = useState('todas'); // Agregar este estado
+  const [tipoFilter, setTipoFilter] = useState('todas');
 
   // Fetch rooms data
   useEffect(() => {
@@ -58,7 +59,6 @@ const RoomManagement = () => {
           numero: parseInt(formData.numero),
           piso: parseInt(formData.piso),
           tipo: formData.tipo,
-          precio: parseFloat(formData.precio),
           capacidad: parseInt(formData.capacidad),
           estado: formData.estado
         })
@@ -105,7 +105,6 @@ const RoomManagement = () => {
       numero: '',
       piso: '',
       tipo: 'individual',
-      precio: '',
       capacidad: 1,
       estado: 'disponible'  // Cambiado de booleano a string
     });
@@ -120,9 +119,12 @@ const RoomManagement = () => {
     setRooms(updatedRooms);
   };
 
-  const filteredRooms = rooms.filter(room => 
-    room.numero.toString().includes(searchTerm.trim())
-  );
+  const filteredRooms = rooms.filter(room => {
+    const matchesSearch = room.numero.toString().includes(searchTerm.trim());
+    const matchesPiso = pisoFilter === 'todas' || room.piso.toString() === pisoFilter;
+    const matchesTipo = tipoFilter === 'todas' || room.tipo === tipoFilter;
+    return matchesSearch && matchesPiso && matchesTipo;
+  });
 
   if (loading) {
     return <div className="loading">Cargando habitaciones...</div>;
@@ -138,15 +140,41 @@ const RoomManagement = () => {
           {showForm ? 'Cancelar' : 'Nueva Habitación'}
         </button>
         
-        <div className="room-search">
-          <input 
-            type="text" 
-            placeholder="Buscar por número..." 
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-          <button><i className="fas fa-search"></i></button>
+        <div className="room-filters">
+          <select 
+            className="piso-filter"
+            value={pisoFilter}
+            onChange={(e) => setPisoFilter(e.target.value)}
+          >
+            <option value="todas">Todos los pisos</option>
+            <option value="1">Piso 1</option>
+            <option value="2">Piso 2</option>
+            <option value="3">Piso 3</option>
+          </select>
+
+          <select 
+            className="tipo-filter"
+            value={tipoFilter}
+            onChange={(e) => setTipoFilter(e.target.value)}
+          >
+            <option value="todas">Todos los tipos</option>
+            <option value="individual">Individual</option>
+            <option value="doble">Doble</option>
+            <option value="triple">Triple</option>
+            <option value="cuadruple">Cuádruple</option>
+            <option value="suite">Suite</option>
+          </select>
+
+          <div className="room-search">
+            <input 
+              type="text" 
+              placeholder="Buscar por número..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
+            <button><i className="fas fa-search"></i></button>
+          </div>
         </div>
       </div>
       
@@ -190,8 +218,10 @@ const RoomManagement = () => {
                   onChange={handleChange}
                   required
                 >
-                  <option value="individual">Individual</option>
+                  <option value="individual">Single</option>
                   <option value="doble">Doble</option>
+                  <option value="triple">Triple</option>
+                  <option value="cuadruple">Cuadruple</option>
                   <option value="suite">Suite</option>
                 </select>
               </div>
@@ -210,30 +240,8 @@ const RoomManagement = () => {
               </div>
             </div>
             
-            {/* <div className="form-group">
-              <label htmlFor="descripcion">Descripción</label>
-              <textarea
-                id="descripcion"
-                name="descripcion"
-                value={formData.descripcion}
-                onChange={handleChange}
-                required
-              ></textarea>
-            </div> */}
-            
             <div className="form-row">
-              <div className="form-group">
-                <label htmlFor="precio">Precio por Noche ($)</label>
-                <input
-                  type="number"
-                  id="precio"
-                  name="precio"
-                  min="0"
-                  value={formData.precio}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
+             
               
               <div className="form-group">
                 <label htmlFor="estado">Estado</label>
@@ -269,7 +277,6 @@ const RoomManagement = () => {
               <th>Piso</th>
               <th>Tipo</th>
               <th>Capacidad</th>
-              <th>Precio</th>
               <th>Estado</th>
               <th>Acciones</th>
             </tr>
@@ -277,7 +284,7 @@ const RoomManagement = () => {
           <tbody>
             {filteredRooms.length === 0 ? (
               <tr>
-                <td colSpan="7" className="no-data">
+                <td colSpan="6" className="no-data">
                   {searchTerm ? 'No se encontraron habitaciones' : 'No hay habitaciones disponibles'}
                 </td>
               </tr>
@@ -293,7 +300,6 @@ const RoomManagement = () => {
                     }
                   </td>
                   <td>{room.capacidad} personas</td>
-                  <td>${room.precio}</td>
                   <td>
                     <span className={`status-badge ${room.estado || 'disponible'}`}>
                       {room.estado 
