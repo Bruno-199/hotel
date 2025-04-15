@@ -7,12 +7,12 @@ const Carousel = () => {
   
   const slides = [
     {
-      image: "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+      image: "https://res.cloudinary.com/dl7rnltwv/image/upload/q_auto:best,f_auto,dpr_auto/v1744686385/IMG_4194_mc1cii.jpg",
       title: "Elegancia y Confort",
       description: "Disfrute de nuestras lujosas instalaciones"
     },
     {
-      image: "https://images.unsplash.com/photo-1611892440504-42a792e24d32?ixlib=rb-4.0.3&auto=format&fit=crop&w=1170&q=80",
+      image: "https://res.cloudinary.com/dl7rnltwv/image/upload/v1744686368/IMG_4144_gvo8au.jpg",
       title: "Habitaciones de Ensueño",
       description: "Descanse en nuestras cómodas y elegantes habitaciones"
     },
