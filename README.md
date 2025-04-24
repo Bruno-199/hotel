@@ -1,58 +1,12 @@
-# Hotel
+# React + Vite
 
-Este repositorio contiene el código fuente de un proyecto de hotel. A continuación, se presentan algunas recomendaciones y directrices para contribuir y mantener el código.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Recomendaciones
+Currently, two official plugins are available:
 
-- No usar mayúsculas en los nombres de archivos y directorios.
-- Usar guion bajo `_` en lugar de espacios en los nombres de archivos y directorios.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Estructura del Proyecto
+## Expanding the ESLint configuration
 
-Explico aquí brevemente la estructura del proyecto, las carpetas y archivos importantes.
-
-## Estructura del Proyecto
-
-```
-hotel/
-├── README.md
-├── back/                   # Backend de la aplicación
-│   ├── config/            # Configuraciones
-│   │   └── db.js         # Configuración de la base de datos MySQL
-│   ├── controllers/       # Controladores
-│   │   ├── habitaciones.js    # Consultas para habitaciones
-│   │   └── imagenes.js        # Consultas para imágenes
-│   ├── routes/           # Rutas de la API
-│   │   ├── habitaciones.js    # Endpoints de habitaciones
-│   │   └── imagenes.js        # Endpoints de imágenes
-│   ├── .gitignore        # Archivos ignorados por git
-│   ├── index.js          # Punto de entrada de la aplicación
-│   └── package.json      # Dependencias y scripts
-│
-└── front/                # Frontend de la aplicación
-    └── index.html       # Página principal
-```
-
-
-## Uso
-
-Instrucciones de instalación y uso
-
-```sh
-
-
-# Instalar dependencias (front y back por separado)
-
-cd front
-npm install
----------
-cd back
-npm install
-
-# Correr front
-cd front
-npm run dev
-
-# Correr servidor
-cd back
-npm run dev
+If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.

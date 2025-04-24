@@ -1,0 +1,47 @@
+:root {
+    --primary-color: #800020; /* Burgundy */
+    --secondary-color: #000000; /* Black */
+    --light-color: #ffffff; /* White */
+    --accent-color: #d2b48c; /* Tan/Sand */
+  }
+  
+  .home-container {
+    min-height: 100vh;
+  }
+  
+  .welcome-section {
+    padding: 5rem 2rem;
+    background-color: var(--light-color);
+    text-align: center;
+  }
+  
+  .welcome-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .welcome-content h1 {
+    color: var(--primary-color);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .welcome-content p {
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
+  
+  @media (max-width: 768px) {
+    .welcome-section {
+      padding: 3rem 1rem;
+    }
+    
+    .welcome-content h1 {
+      font-size: 2rem;
+    }
+    
+    .welcome-content p {
+      font-size: 1rem;
+    }
+  }
