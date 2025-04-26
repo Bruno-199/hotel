@@ -1,0 +1,111 @@
+:root {
+    --primary-color: #800020; /* Burgundy */
+    --secondary-color: #000000; /* Black */
+    --light-color: #ffffff; /* White */
+    --accent-color: #d2b48c; /* Tan/Sand */
+  }
+  
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - 80px);
+    background-color: var(--accent-color);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/hotel-bg.jpg');
+    background-size: cover;
+    background-position: center;
+  }
+  
+  .login-card {
+    width: 100%;
+    max-width: 450px;
+    padding: 2rem;
+    background-color: var(--light-color);
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .login-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .login-header h2 {
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+  }
+  
+  .login-header p {
+    color: var(--secondary-color);
+    opacity: 0.7;
+  }
+  
+  .error-message {
+    background-color: #ffebee;
+    color: #c62828;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .login-form {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+  }
+  
+  .login-btn {
+    background-color: var(--primary-color);
+    color: var(--light-color);
+    border: none;
+    border-radius: 4px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .login-btn:hover {
+    background-color: #600018;
+  }
+  
+  .login-footer {
+    margin-top: 1.5rem;
+    text-align: center;
+    color: var(--secondary-color);
+    opacity: 0.7;
+    font-size: 0.9rem;
+  }
+  
+  @media (max-width: 768px) {
+    .login-card {
+      max-width: 90%;
+      margin: 0 1rem;
+    }
+  }
