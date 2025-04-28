@@ -7,7 +7,7 @@ const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   
   // Logo URL from a free logo site
-  const logoUrl = "https://lh3.googleusercontent.com/proxy/xqttsQDGnGeNZhbwkodBvbXcwKuHxdecxTsa8AyUG3pFSH-Th-hemilbqqcc3Hrqm-xc5vO9K9n9xevRwXuFOBp2NQ";
+  const logoUrl = "https://res.cloudinary.com/dhpcc3pqo/image/upload/v1745851563/unnamed_maycrl.jpg";
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);

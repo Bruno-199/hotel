@@ -4,7 +4,7 @@ import '../css/footer.css';
 
 const Footer = () => {
   // Using an online logo URL instead of local import
-  const logoUrl = "https://lh3.googleusercontent.com/proxy/xqttsQDGnGeNZhbwkodBvbXcwKuHxdecxTsa8AyUG3pFSH-Th-hemilbqqcc3Hrqm-xc5vO9K9n9xevRwXuFOBp2NQ";
+  const logoUrl = "https://res.cloudinary.com/dhpcc3pqo/image/upload/v1745851563/unnamed_maycrl.jpg";
 
   return (
     <footer className="footer">
