@@ -33,7 +33,7 @@
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    gap: 2rem;
+    gap: 3rem;
     max-width: 1000px;
     margin: 0 auto 2rem;
   }
@@ -56,7 +56,7 @@
   
   .payment-method-item img {
     height: 60px;
-    margin-bottom: 1rem;
+    margin-bottom: rem;
     object-fit: contain;
   }
   

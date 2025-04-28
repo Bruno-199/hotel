@@ -59,15 +59,24 @@ const ReservationTable = () => {
     e.preventDefault();
     
     try {
-      // Verificar si la habitación existe y está disponible
-      const habitacion = rooms.find(room => room.numero.toString() === formData.numero_habitacion);
+      // Convertir el número de habitación a número para la comparación
+      const numeroHabitacion = parseInt(formData.numero_habitacion);
+      
+      // Verificar si la habitación existe
+      const habitacion = rooms.find(room => room.numero === numeroHabitacion);
       
       if (!habitacion) {
-        throw new Error('La habitación no existe');
+        alert('Error: La habitación seleccionada no existe');
+        return;
       }
 
-      if (habitacion.estado === 'mantenimiento' || habitacion.estado === 'ocupada') {
-        throw new Error('La habitación no está disponible');
+      // Si estamos editando y es la misma habitación, permitir la edición
+      // Si es una habitación diferente o es una nueva reserva, verificar disponibilidad
+      if (!isEditing || (isEditing && habitacion.numero !== parseInt(formData.numero_habitacion))) {
+        if (habitacion.estado === 'mantenimiento' || habitacion.estado === 'ocupada') {
+          alert('Error: La habitación no está disponible');
+          return;
+        }
       }
 
       const url = isEditing 
@@ -81,7 +90,8 @@ const ReservationTable = () => {
         },
         body: JSON.stringify({
           ...formData,
-          id_habitacion: habitacion.id_habitacion, // Usar el ID de la habitación encontrada
+          id_habitacion: habitacion.id_habitacion,
+          numero_habitacion: habitacion.numero,
           estado: formData.estado || 'pendiente'
         })
       });
@@ -96,7 +106,7 @@ const ReservationTable = () => {
       resetForm();
     } catch (error) {
       console.error('Error:', error);
-      alert(error.message);
+      alert(error.message || 'Error al procesar la reserva');
     }
   };
 
@@ -232,16 +242,28 @@ const ReservationTable = () => {
               
               <div className="form-group">
                 <label htmlFor="numero_habitacion">Número de Habitación</label>
-                <input
-                  type="number"
+                <select
                   id="numero_habitacion"
                   name="numero_habitacion"
                   value={formData.numero_habitacion}
                   onChange={handleChange}
                   required
-                  min="1"
-                  placeholder="Ingrese el número de habitación"
-                />
+                >
+                  <option value="">Seleccione una habitación</option>
+                  {rooms
+                    .filter(room => 
+                      room.estado === 'disponible' || 
+                      (isEditing && room.numero.toString() === formData.numero_habitacion)
+                    )
+                    .sort((a, b) => a.numero - b.numero)
+                    .map(room => (
+                      <option key={room.id_habitacion} value={room.numero}>
+                        Habitación {room.numero} - {room.tipo} ({room.capacidad} personas) 
+                        {room.estado !== 'disponible' ? ' - ' + room.estado : ''}
+                      </option>
+                    ))
+                  }
+                </select>
               </div>
             </div>
             

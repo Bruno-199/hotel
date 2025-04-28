@@ -76,8 +76,7 @@ const RoomManagement = () => {
 
   const handleEdit = (room) => {
     setFormData({
-      ...room,
-      precio: room.precio.toString()
+      ...room
     });
     setIsEditing(true);
     setShowForm(true);
@@ -106,17 +105,10 @@ const RoomManagement = () => {
       piso: '',
       tipo: 'individual',
       capacidad: 1,
-      estado: 'disponible'  // Cambiado de booleano a string
+      estado: 'disponible'
     });
     setIsEditing(false);
     setShowForm(false);
-  };
-
-  const toggleAvailability = (id) => {
-    const updatedRooms = rooms.map(room => 
-      room.id === id ? { ...room, estado: room.estado === 'disponible' ? 'no disponible' : 'disponible' } : room
-    );
-    setRooms(updatedRooms);
   };
 
   const filteredRooms = rooms.filter(room => {
