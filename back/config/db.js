@@ -11,10 +11,10 @@ const localConnection = mysql.createPool({
 
 // Configuración base de datos en Railway
 const cloudConnection = mysql.createPool({
-    host: "centerbeam.proxy.rlwy.net",
-    port: 12609,
+    host: "hopper.proxy.rlwy.net",
+    port: 23292,
     user: "root",
-    password: "aVZSXKogFrLMFhDHYQjmmftszuXXswms",
+    password: "dVIxIaWvTouOYCnrOTsLpFYdIIItMrFs",
     database: "railway"
 });
 

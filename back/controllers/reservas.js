@@ -1,5 +1,24 @@
 const { conection } = require("../config/db");
 
+// Función auxiliar para actualizar el estado de la habitación
+const actualizarEstadoHabitacion = (idHabitacion, callback) => {
+  const query = `
+    UPDATE habitaciones 
+    SET estado = CASE 
+      WHEN EXISTS (
+        SELECT 1 FROM reservas 
+        WHERE id_habitacion = ? 
+        AND estado = 'confirmada'
+        AND CURDATE() BETWEEN fecha_entrada AND fecha_salida
+      ) THEN 'ocupada'
+      ELSE 'disponible'
+    END
+    WHERE id_habitacion = ? AND estado != 'mantenimiento'
+  `;
+  
+  conection.query(query, [idHabitacion, idHabitacion], callback);
+};
+
 const todo_reservas = (req, res) => {
   const query = `
     SELECT r.*, h.numero as numero_habitacion 
@@ -33,16 +52,24 @@ const agregar_reserva = (req, res) => {
 
   conection.query(query, 
     [id_habitacion, nombre, telefono, dni, fecha_entrada, fecha_salida, estado || 'pendiente'], 
-    (err, results) => {
-      if (err) {
-        // Verificar si es el error del trigger
-        if (err.code === 'ERR_SIGNAL_MESSAGE') {
+    (err, results) => {      if (err) {
+        console.error('Error al crear reserva:', err);
+        // Manejar errores específicos de los triggers
+        if (err.code === '45000' || err.code === 'ER_SIGNAL_EXCEPTION') {
           return res.status(400).json({ 
-            error: "No se puede reservar una habitación en mantenimiento" 
+            error: err.sqlMessage || err.message || "Error en la validación de la reserva"
           });
         }
         return res.status(500).json({ error: "Error al crear la reserva" });
       }
+      
+      // Actualizar el estado de la habitación después de crear la reserva
+      actualizarEstadoHabitacion(id_habitacion, (updateErr) => {
+        if (updateErr) {
+          console.error('Error al actualizar estado de habitación:', updateErr);
+        }
+      });
+
       res.status(201).json({
         success: true,
         message: "Reserva creada exitosamente",
@@ -66,25 +93,64 @@ const borrar_reserva = (req, res) => {
 const editar_reserva = (req, res) => {
   const id = req.params.id;
   const { id_habitacion, nombre, telefono, dni, fecha_entrada, fecha_salida, estado } = req.body;
+  let oldIdHabitacion;
 
-  const query = `UPDATE reservas 
-                 SET id_habitacion = ?, 
-                     nombre = ?, 
-                     telefono = ?, 
-                     dni = ?, 
-                     fecha_entrada = ?, 
-                     fecha_salida = ?,
-                     estado = ? 
-                 WHERE id_reserva = ?`;
-
-  conection.query(
-    query, 
-    [id_habitacion, nombre, telefono, dni, fecha_entrada, fecha_salida, estado, id], 
-    (err, results) => {
-      if (err) throw err;
-      res.send(results);
+  // Primero obtener la habitación anterior
+  conection.query('SELECT id_habitacion FROM reservas WHERE id_reserva = ?', [id], (err, results) => {
+    if (err) {
+      console.error('Error al obtener reserva anterior:', err);
+      return res.status(500).json({ error: "Error al actualizar la reserva" });
     }
-  );
+
+    oldIdHabitacion = results[0]?.id_habitacion;
+
+    const query = `UPDATE reservas 
+                   SET id_habitacion = ?, 
+                       nombre = ?, 
+                       telefono = ?, 
+                       dni = ?, 
+                       fecha_entrada = ?, 
+                       fecha_salida = ?,
+                       estado = ? 
+                   WHERE id_reserva = ?`;
+
+    conection.query(
+      query, 
+      [id_habitacion, nombre, telefono, dni, fecha_entrada, fecha_salida, estado, id], 
+      (err, results) => {        if (err) {
+          console.error('Error al actualizar reserva:', err);
+          // Manejar errores específicos de los triggers
+          if (err.code === '45000' || err.code === 'ER_SIGNAL_EXCEPTION') {
+            return res.status(400).json({ 
+              error: err.sqlMessage || err.message || "Error en la validación de la reserva"
+            });
+          }
+          return res.status(500).json({ error: "Error al actualizar la reserva" });
+        }
+
+        // Actualizar estado de ambas habitaciones si es necesario
+        actualizarEstadoHabitacion(id_habitacion, (updateErr) => {
+          if (updateErr) {
+            console.error('Error al actualizar estado de habitación nueva:', updateErr);
+          }
+          
+          if (oldIdHabitacion && oldIdHabitacion !== id_habitacion) {
+            actualizarEstadoHabitacion(oldIdHabitacion, (updateErr) => {
+              if (updateErr) {
+                console.error('Error al actualizar estado de habitación anterior:', updateErr);
+              }
+            });
+          }
+        });
+
+        res.json({
+          success: true,
+          message: "Reserva actualizada exitosamente",
+          affected: results.affectedRows
+        });
+      }
+    );
+  });
 };
 
 const ver_reserva = (req, res) => {
@@ -102,11 +168,32 @@ const cambiar_estado_reserva = (req, res) => {
   const id = req.params.id;
   const { estado } = req.body;
 
-  const query = `UPDATE reservas SET estado = ? WHERE id_reserva = ?`;
+  // Primero obtener el id_habitacion
+  conection.query('SELECT id_habitacion FROM reservas WHERE id_reserva = ?', [id], (err, results) => {
+    if (err) {
+      console.error('Error al obtener reserva:', err);
+      return res.status(500).json({ error: "Error al cambiar estado de la reserva" });
+    }
 
-  conection.query(query, [estado, id], (err, results) => {
-    if (err) throw err;
-    res.json({ message: `Estado de reserva actualizado a ${estado}` });
+    const id_habitacion = results[0]?.id_habitacion;
+
+    const query = `UPDATE reservas SET estado = ? WHERE id_reserva = ?`;
+
+    conection.query(query, [estado, id], (err, results) => {
+      if (err) {
+        console.error('Error al actualizar estado de reserva:', err);
+        return res.status(500).json({ error: "Error al cambiar estado de la reserva" });
+      }
+
+      // Actualizar estado de la habitación
+      actualizarEstadoHabitacion(id_habitacion, (updateErr) => {
+        if (updateErr) {
+          console.error('Error al actualizar estado de habitación:', updateErr);
+        }
+      });
+
+      res.json({ message: `Estado de reserva actualizado a ${estado}` });
+    });
   });
 };
 

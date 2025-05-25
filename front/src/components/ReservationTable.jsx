@@ -59,10 +59,7 @@ const ReservationTable = () => {
     e.preventDefault();
     
     try {
-      // Convertir el número de habitación a número para la comparación
       const numeroHabitacion = parseInt(formData.numero_habitacion);
-      
-      // Verificar si la habitación existe
       const habitacion = rooms.find(room => room.numero === numeroHabitacion);
       
       if (!habitacion) {
@@ -70,13 +67,13 @@ const ReservationTable = () => {
         return;
       }
 
-      // Si estamos editando y es la misma habitación, permitir la edición
-      // Si es una habitación diferente o es una nueva reserva, verificar disponibilidad
-      if (!isEditing || (isEditing && habitacion.numero !== parseInt(formData.numero_habitacion))) {
-        if (habitacion.estado === 'mantenimiento' || habitacion.estado === 'ocupada') {
-          alert('Error: La habitación no está disponible');
-          return;
-        }
+      // Validar fechas
+      const fechaEntrada = new Date(formData.fecha_entrada);
+      const fechaSalida = new Date(formData.fecha_salida);
+      
+      if (fechaEntrada >= fechaSalida) {
+        alert('La fecha de entrada debe ser anterior a la fecha de salida');
+        return;
       }
 
       const url = isEditing 
@@ -94,9 +91,7 @@ const ReservationTable = () => {
           numero_habitacion: habitacion.numero,
           estado: formData.estado || 'pendiente'
         })
-      });
-
-      const data = await response.json();
+      });      const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || 'Error al procesar la reserva');
@@ -106,7 +101,13 @@ const ReservationTable = () => {
       resetForm();
     } catch (error) {
       console.error('Error:', error);
-      alert(error.message || 'Error al procesar la reserva');
+      
+      // Mostrar el mensaje de error específico de la validación
+      if (error.message && error.message.includes('habitación ya está reservada')) {
+        alert('La habitación ya está reservada en esas fechas');
+      } else {
+        alert(error.message || 'Error al procesar la reserva');
+      }
     }
   };
 
@@ -248,13 +249,8 @@ const ReservationTable = () => {
                   value={formData.numero_habitacion}
                   onChange={handleChange}
                   required
-                >
-                  <option value="">Seleccione una habitación</option>
+                >                  <option value="">Seleccione una habitación</option>
                   {rooms
-                    .filter(room => 
-                      room.estado === 'disponible' || 
-                      (isEditing && room.numero.toString() === formData.numero_habitacion)
-                    )
                     .sort((a, b) => a.numero - b.numero)
                     .map(room => (
                       <option key={room.id_habitacion} value={room.numero}>
